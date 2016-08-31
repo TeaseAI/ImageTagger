@@ -84,7 +84,7 @@ namespace ImageTagger
 
 				ImageInfo info;
 				if (!images.TryGetValue(key, out info))
-					info = images[key] = new ImageInfo() { Key = key }; ;
+					info = images[key] = new ImageInfo() { ImageKey = key }; ;
 
 				info.File = file;
 
@@ -99,26 +99,24 @@ namespace ImageTagger
 					else if (img.Height > img.Width)
 						w = (int)((float)img.Width / (float)img.Height * imageSize);
 					var thumb = img.GetThumbnailImage(imageSize, imageSize, null, IntPtr.Zero);
-					var bit = new Bitmap(imageSize, imageSize);
-					var g = Graphics.FromImage(bit);
+					info.Bitmap = new Bitmap(imageSize, imageSize);
+					var g = Graphics.FromImage(info.Bitmap);
 					// ToDo : center after resize.
 					g.FillRectangle(Brushes.Transparent, 0, 0, imageSize, imageSize);
 					g.DrawImage(thumb, 0, 0, w, h);
 					g.Dispose();
 
-					Invoke(new addImage(addimg), key, bit);
+					Invoke(new addImage(addimg), info);
 				}).Start();
 			}
 			lst.ResumeLayout(true);
 		}
 
-		public delegate void addImage(string key, Bitmap bitmap);
-		private void addimg(string key, Bitmap bitmap)
+		public delegate void addImage(ImageInfo info);
+		private void addimg(ImageInfo info)
 		{
-			imageList.Images.Add(key, bitmap);
-			var item = new ListViewItem();
-			item.ImageKey = key;
-			lst.Items.Add(item);
+			imageList.Images.Add(info.Key, info.Bitmap);
+			lst.Items.Add(info);
 		}
 
 		private void buttonSave_Click(object sender, EventArgs e)
