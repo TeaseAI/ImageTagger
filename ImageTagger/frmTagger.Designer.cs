@@ -34,6 +34,7 @@
 			this.txtPath = new System.Windows.Forms.TextBox();
 			this.buttonLoad = new System.Windows.Forms.Button();
 			this.panelTop = new System.Windows.Forms.Panel();
+			this.btnPickPath = new System.Windows.Forms.Button();
 			this.buttonSave = new System.Windows.Forms.Button();
 			this.panelRight = new System.Windows.Forms.Panel();
 			this.listExtraTags = new System.Windows.Forms.ListBox();
@@ -57,7 +58,6 @@
 			this.checkBox3 = new System.Windows.Forms.CheckBox();
 			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
-			this.btnPickPath = new System.Windows.Forms.Button();
 			this.panelTop.SuspendLayout();
 			this.panelRight.SuspendLayout();
 			this.SuspendLayout();
@@ -78,6 +78,7 @@
 			this.lst.UseCompatibleStateImageBehavior = false;
 			this.lst.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lst_ItemSelectionChanged);
 			this.lst.SelectedIndexChanged += new System.EventHandler(this.lst_SelectedIndexChanged);
+			this.lst.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lst_KeyDown);
 			// 
 			// imageList
 			// 
@@ -113,6 +114,16 @@
 			this.panelTop.Name = "panelTop";
 			this.panelTop.Size = new System.Drawing.Size(810, 27);
 			this.panelTop.TabIndex = 3;
+			// 
+			// btnPickPath
+			// 
+			this.btnPickPath.Location = new System.Drawing.Point(402, 3);
+			this.btnPickPath.Name = "btnPickPath";
+			this.btnPickPath.Size = new System.Drawing.Size(41, 20);
+			this.btnPickPath.TabIndex = 4;
+			this.btnPickPath.Text = "...";
+			this.btnPickPath.UseVisualStyleBackColor = true;
+			this.btnPickPath.Click += new System.EventHandler(this.btnPickPath_Click);
 			// 
 			// buttonSave
 			// 
@@ -387,15 +398,6 @@
 			this.checkBox1.Text = "Face";
 			this.checkBox1.UseVisualStyleBackColor = true;
 			this.checkBox1.CheckedChanged += new System.EventHandler(this.tagChanged_CheckedChanged);
-			// 
-			// btnPickPath
-			// 
-			this.btnPickPath.Location = new System.Drawing.Point(402, 3);
-			this.btnPickPath.Name = "btnPickPath";
-			this.btnPickPath.Size = new System.Drawing.Size(41, 20);
-			this.btnPickPath.TabIndex = 4;
-			this.btnPickPath.Text = "...";
-			this.btnPickPath.UseVisualStyleBackColor = true;
 			// 
 			// frmTagger
 			// 

@@ -106,12 +106,14 @@ namespace ImageTagger
 					g.FillRectangle(Brushes.Transparent, 0, 0, imageSize, imageSize);
 					g.DrawImage(thumb, 0, 0, w, h);
 					g.Dispose();
+					thumb.Dispose();
+					img.Dispose();
 
 					imageList.Images.Add(info.Key, info.Bitmap);
 				});
 			}
 			threadPool.WaitForAll();
-			
+
 			lst.Items.AddRange(images.Values.ToArray());
 
 			lst.ResumeLayout(true);
@@ -198,5 +200,33 @@ namespace ImageTagger
 
 		}
 
+		private void lst_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Control && e.KeyCode == Keys.A)
+			{
+				foreach (ImageInfo info in lst.Items)
+				{
+					info.Selected = true;
+				}
+			}
+		}
+
+		private void btnPickPath_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog openFileDialog = new OpenFileDialog();
+			if (txtPath.Text.Length > 0)
+				openFileDialog.InitialDirectory = txtPath.Text;
+
+			openFileDialog.FileName = "Filename will be ignored";
+			openFileDialog.CheckPathExists = true;
+			openFileDialog.CheckFileExists = false;
+			openFileDialog.ValidateNames = false;
+
+			if (openFileDialog.ShowDialog() == DialogResult.OK)
+			{
+				txtPath.Text = Path.GetDirectoryName(openFileDialog.FileName);
+				buttonLoad_Click(sender, e);
+			}
+		}
 	}
 }
