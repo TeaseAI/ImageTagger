@@ -22,6 +22,8 @@ namespace ImageTagger
 
 		private string path = "";
 
+		private ThreadPool threadPool = new ThreadPool(Environment.ProcessorCount);
+
 		public frmTagger()
 		{
 			InitializeComponent();
@@ -52,6 +54,7 @@ namespace ImageTagger
 			if (path.Length == 0 || !Directory.Exists(path))
 				return;
 
+			lst.SuspendLayout();
 			images.Clear();
 			lst.Clear();
 			imageList.Images.Clear();
@@ -77,7 +80,6 @@ namespace ImageTagger
 			files.AddRange(Directory.GetFiles(txtPath.Text, "*.gif", SearchOption.TopDirectoryOnly));
 
 
-			lst.SuspendLayout();
 			foreach (var file in files)
 			{
 				var key = Path.GetFileName(file).ToLower();
@@ -88,8 +90,7 @@ namespace ImageTagger
 
 				info.File = file;
 
-				// Note: This is not how you are suppose to do threading.
-				new Thread(() =>
+				threadPool.RunOrWait(() =>
 				{
 					// get image thumbnail and resize it.
 					var img = Image.FromFile(file);
@@ -106,17 +107,14 @@ namespace ImageTagger
 					g.DrawImage(thumb, 0, 0, w, h);
 					g.Dispose();
 
-					Invoke(new addImage(addimg), info);
-				}).Start();
+					imageList.Images.Add(info.Key, info.Bitmap);
+				});
 			}
-			lst.ResumeLayout(true);
-		}
+			threadPool.WaitForAll();
+			
+			lst.Items.AddRange(images.Values.ToArray());
 
-		public delegate void addImage(ImageInfo info);
-		private void addimg(ImageInfo info)
-		{
-			imageList.Images.Add(info.Key, info.Bitmap);
-			lst.Items.Add(info);
+			lst.ResumeLayout(true);
 		}
 
 		private void buttonSave_Click(object sender, EventArgs e)

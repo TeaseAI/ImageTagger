@@ -52,6 +52,7 @@
     <Compile Include="ImageInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ThreadPool.cs" />
     <EmbeddedResource Include="frmTagger.resx">
       <DependentUpon>frmTagger.cs</DependentUpon>
     </EmbeddedResource>
