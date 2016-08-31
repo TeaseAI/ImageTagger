@@ -47,7 +47,7 @@ namespace ImageTagger
 
 		private void frmTagger_Load(object sender, EventArgs e)
 		{
-			buttonLoad_Click(sender, e);
+			ActiveControl = txtPath;
 		}
 
 		private void frmTagger_FormClosing(object sender, FormClosingEventArgs e)
@@ -210,6 +210,15 @@ namespace ImageTagger
 			{
 				txtPath.Text = Path.GetDirectoryName(openFileDialog.FileName);
 				buttonLoad_Click(sender, e);
+			}
+		}
+
+		private void txtPath_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Enter)
+			{
+				buttonLoad_Click(sender, e);
+				e.SuppressKeyPress = true;
 			}
 		}
 	}

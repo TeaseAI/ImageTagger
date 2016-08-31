@@ -50,7 +50,7 @@
 			this.lst.Location = new System.Drawing.Point(0, 27);
 			this.lst.Name = "lst";
 			this.lst.ShowGroups = false;
-			this.lst.Size = new System.Drawing.Size(810, 654);
+			this.lst.Size = new System.Drawing.Size(918, 654);
 			this.lst.TabIndex = 0;
 			this.lst.TileSize = new System.Drawing.Size(128, 128);
 			this.lst.UseCompatibleStateImageBehavior = false;
@@ -69,7 +69,8 @@
 			this.txtPath.Location = new System.Drawing.Point(3, 3);
 			this.txtPath.Name = "txtPath";
 			this.txtPath.Size = new System.Drawing.Size(393, 20);
-			this.txtPath.TabIndex = 1;
+			this.txtPath.TabIndex = 0;
+			this.txtPath.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPath_KeyDown);
 			// 
 			// buttonLoad
 			// 
@@ -90,7 +91,7 @@
 			this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
 			this.panelTop.Location = new System.Drawing.Point(0, 0);
 			this.panelTop.Name = "panelTop";
-			this.panelTop.Size = new System.Drawing.Size(810, 27);
+			this.panelTop.Size = new System.Drawing.Size(918, 27);
 			this.panelTop.TabIndex = 3;
 			// 
 			// btnPickPath
@@ -98,7 +99,7 @@
 			this.btnPickPath.Location = new System.Drawing.Point(402, 3);
 			this.btnPickPath.Name = "btnPickPath";
 			this.btnPickPath.Size = new System.Drawing.Size(41, 20);
-			this.btnPickPath.TabIndex = 4;
+			this.btnPickPath.TabIndex = 1;
 			this.btnPickPath.Text = "...";
 			this.btnPickPath.UseVisualStyleBackColor = true;
 			this.btnPickPath.Click += new System.EventHandler(this.btnPickPath_Click);
@@ -116,7 +117,7 @@
 			// panelRight
 			// 
 			this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
-			this.panelRight.Location = new System.Drawing.Point(810, 0);
+			this.panelRight.Location = new System.Drawing.Point(918, 0);
 			this.panelRight.Name = "panelRight";
 			this.panelRight.Size = new System.Drawing.Size(258, 681);
 			this.panelRight.TabIndex = 4;
@@ -126,12 +127,12 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1068, 681);
+			this.ClientSize = new System.Drawing.Size(1176, 681);
 			this.Controls.Add(this.lst);
 			this.Controls.Add(this.panelTop);
 			this.Controls.Add(this.panelRight);
 			this.Name = "frmTagger";
-			this.Text = "Form1";
+			this.Text = "ImageTagger";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmTagger_FormClosing);
 			this.Load += new System.EventHandler(this.frmTagger_Load);
 			this.panelTop.ResumeLayout(false);

@@ -73,7 +73,7 @@ namespace ImageTagger
 			var tag = (string)t.Tag;
 			var info = tags[tag];
 
-			info.CheckBox.CheckState = CheckState.Indeterminate;
+			info.State = CheckState.Indeterminate;
 		}
 
 		private void tag_CheckStateChanged(object sender, EventArgs e)
@@ -95,12 +95,7 @@ namespace ImageTagger
 		public void BeginAdjust()
 		{
 			foreach (var t in tags.Values)
-			{
-				if (t.TextBox != null)
-					t.TextBox.Text = "";
-				t.State = CheckState.Unchecked;
-				t.Unset = true;
-			}
+				t.Reset();
 		}
 
 		public void AdjustTags(Dictionary<string, string> imgTags)
@@ -158,22 +153,46 @@ namespace ImageTagger
 			{
 				get
 				{
-					if (TextBox != null)
-						return TextBox.Text;
+					if (textBox != null)
+						return textBox.Text;
 					return "";
 				}
 			}
 
 			public readonly CheckBox CheckBox;
-			public readonly TextBox TextBox;
+			private readonly TextBox textBox;
+			private HashSet<string> text;
 
-			public tagInfo(CheckBox c, TextBox t) { CheckBox = c; TextBox = t; }
-			public void AppendText(string text)
+			public tagInfo(CheckBox c, TextBox t)
 			{
-				if (TextBox.Text == "")
-					TextBox.Text = text;
-				else
-					TextBox.Text += "&" + text;
+				CheckBox = c;
+				textBox = t;
+				if (textBox != null)
+				{
+					text = new HashSet<string>();
+					textBox.TextChanged += TextBox_TextChanged;
+				}
+			}
+
+			private void TextBox_TextChanged(object sender, EventArgs e)
+			{
+				text.Clear();
+			}
+
+			public void Reset()
+			{
+				if (textBox != null)
+					textBox.Text = "";
+				State = CheckState.Unchecked;
+				Unset = true;
+			}
+
+			public void AppendText(string txt)
+			{
+				if (text.Contains(txt))
+					return;
+				text.Add(txt);
+				textBox.Text = string.Join(" & ", text.ToArray());
 			}
 		}
 	}
