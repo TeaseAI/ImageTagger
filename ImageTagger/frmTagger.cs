@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading;
 
 namespace ImageTagger
 {
@@ -76,7 +77,7 @@ namespace ImageTagger
 			files.AddRange(Directory.GetFiles(txtPath.Text, "*.gif", SearchOption.TopDirectoryOnly));
 
 
-
+			lst.SuspendLayout();
 			foreach (var file in files)
 			{
 				var key = Path.GetFileName(file).ToLower();
@@ -87,28 +88,37 @@ namespace ImageTagger
 
 				info.File = file;
 
-				// get image thumbnail and resize it.
-				var img = Image.FromFile(file);
-				int w = imageSize, h = imageSize;
-				if (img.Width > img.Height)
-					h = (int)((float)img.Height / (float)img.Width * imageSize);
-				else if (img.Height > img.Width)
-					w = (int)((float)img.Width / (float)img.Height * imageSize);
-				var thumb = img.GetThumbnailImage(imageSize, imageSize, null, IntPtr.Zero);
-				var bit = new Bitmap(imageSize, imageSize);
-				var g = Graphics.FromImage(bit);
-				// ToDo : center after resize.
-				g.FillRectangle(Brushes.Transparent, 0, 0, imageSize, imageSize);
-				g.DrawImage(thumb, 0, 0, w, h);
-				g.Dispose();
+				// Note: This is not how you are suppose to do threading.
+				new Thread(() =>
+				{
+					// get image thumbnail and resize it.
+					var img = Image.FromFile(file);
+					int w = imageSize, h = imageSize;
+					if (img.Width > img.Height)
+						h = (int)((float)img.Height / (float)img.Width * imageSize);
+					else if (img.Height > img.Width)
+						w = (int)((float)img.Width / (float)img.Height * imageSize);
+					var thumb = img.GetThumbnailImage(imageSize, imageSize, null, IntPtr.Zero);
+					var bit = new Bitmap(imageSize, imageSize);
+					var g = Graphics.FromImage(bit);
+					// ToDo : center after resize.
+					g.FillRectangle(Brushes.Transparent, 0, 0, imageSize, imageSize);
+					g.DrawImage(thumb, 0, 0, w, h);
+					g.Dispose();
 
-
-				imageList.Images.Add(key, bit);
-
-				var item = new ListViewItem();
-				item.ImageKey = key;
-				lst.Items.Add(item);
+					Invoke(new addImage(addimg), key, bit);
+				}).Start();
 			}
+			lst.ResumeLayout(true);
+		}
+
+		public delegate void addImage(string key, Bitmap bitmap);
+		private void addimg(string key, Bitmap bitmap)
+		{
+			imageList.Images.Add(key, bitmap);
+			var item = new ListViewItem();
+			item.ImageKey = key;
+			lst.Items.Add(item);
 		}
 
 		private void buttonSave_Click(object sender, EventArgs e)
