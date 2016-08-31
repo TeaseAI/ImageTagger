@@ -14,7 +14,6 @@ namespace ImageTagger
 	public partial class frmTagger : Form
 	{
 		private Dictionary<string, ImageInfo> images = new Dictionary<string, ImageInfo>();
-		private Dictionary<string, Control> tagControls = new Dictionary<string, Control>();
 
 		private int imageSize = 256;
 
@@ -24,6 +23,8 @@ namespace ImageTagger
 
 		private ThreadPool threadPool = new ThreadPool(Environment.ProcessorCount);
 
+		private List<UITagGroup> tagGroups = new List<UITagGroup>();
+
 		public frmTagger()
 		{
 			InitializeComponent();
@@ -31,8 +32,17 @@ namespace ImageTagger
 			imageList.ImageSize = new Size(imageSize, imageSize);
 			lst.TileSize = imageList.ImageSize;
 
-			foreach (Control c in panelRight.Controls)
-				tagControls["Tag" + c.Text] = c;
+			addGroup(new UITagGroup("Viable Body Parts", false, false, onTagChanged, "Face", "Boobs", "Pussy", "Ass", "Legs", "Feet"));
+			addGroup(new UITagGroup("Covering", true, false, onTagChanged, "FullyDressed", "HalfDressed", "GarmentCovering", "HandsCovering", "SeeTrhough", "Naked"));
+			addGroup(new UITagGroup("Action", false, false, onTagChanged, "Masturbating", "Sucking", "Smiling", "Glaring"));
+			addGroup(new UITagGroup("Other", false, false, onTagChanged, "SideView", "CloseUp", "AllFours", "Piercing"));
+			addGroup(new UITagGroup("Text", false, true, onTagChanged, "Garment", "Underwear", "Tattoo", "SexToy", "Furniture"));
+		}
+
+		private void addGroup(UITagGroup group)
+		{
+			tagGroups.Add(group);
+			panelRight.Controls.Add(group);
 		}
 
 		private void frmTagger_Load(object sender, EventArgs e)
@@ -137,62 +147,36 @@ namespace ImageTagger
 
 		}
 
-		private void tagChanged_CheckedChanged(object sender, EventArgs e)
+		public void onTagChanged(string tag, string text, CheckState state)
 		{
 			if (PauseChanged)
 				return;
 
-			bool enabled = false;
-			string tag = "Tag" + (sender as Control).Text;
-
-			var chk = sender as CheckBox;
-			var rad = sender as RadioButton;
-			if (rad != null)
-				enabled = rad.Checked;
-			if (chk != null)
-				enabled = chk.Checked;
-
 			// remove or add the tag for all the selected items.
 			var items = lst.SelectedItems;
-			if (enabled)
-				foreach (ListViewItem item in items)
-					images[item.ImageKey].Tags.Add(tag);
-			else
-				foreach (ListViewItem item in items)
-					images[item.ImageKey].Tags.Remove(tag);
+			if (state == CheckState.Checked)
+				foreach (ImageInfo item in items)
+					item.Tags[tag] = text;
+			else if (state == CheckState.Unchecked)
+				foreach (ImageInfo item in items)
+					item.Tags.Remove(tag);
 		}
 
 		private void lst_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			PauseChanged = true;
 
-			listExtraTags.Items.Clear();
-			foreach (Control c in panelRight.Controls)
-				setChecked(c, false);
-
+			foreach (var group in tagGroups)
+				group.BeginAdjust();
 
 			var items = lst.SelectedItems;
 			foreach (ListViewItem item in items)
-				foreach (string t in images[item.ImageKey].Tags)
-				{
-					Control c;
-					if (tagControls.TryGetValue(t, out c))
-						setChecked(c, true);
-					else if (!listExtraTags.Items.Contains(t))
-						listExtraTags.Items.Add(t);
-				}
+			{
+				foreach (var group in tagGroups)
+					group.AdjustTags(images[item.ImageKey].Tags);
+			}
 
 			PauseChanged = false;
-		}
-
-		private void setChecked(Control control, bool state)
-		{
-			var chk = control as CheckBox;
-			if (chk != null)
-				chk.Checked = state;
-			var rad = control as RadioButton;
-			if (rad != null)
-				rad.Checked = state;
 		}
 
 		private void lst_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
