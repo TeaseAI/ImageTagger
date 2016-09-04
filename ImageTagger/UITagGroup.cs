@@ -11,6 +11,8 @@ namespace ImageTagger
 {
 	public partial class UITagGroup : UserControl
 	{
+		private static HashSet<Keys> shortcutDuplcate = new HashSet<Keys>();
+
 		/// <summary> Prefixes all tags with "Tag" for use in Tease AI. </summary>
 		public static bool PrefixWithTag = true;
 
@@ -21,6 +23,7 @@ namespace ImageTagger
 		private bool hasText;
 
 		private Dictionary<string, tagInfo> tags = new Dictionary<string, tagInfo>();
+		private Dictionary<Keys, tagInfo> shortcuts = new Dictionary<Keys, tagInfo>();
 
 		public UITagGroup(string title, bool singleSelection, bool hasText, TagChanged_Delegate onTagChanged, params string[] tags)
 		{
@@ -38,6 +41,19 @@ namespace ImageTagger
 				string tag = tags[i];
 				if (PrefixWithTag)
 					tag = "Tag" + tag;
+
+				// Get shortcut key from the tag.
+				int mneIndex = tag.IndexOf('&');
+				Keys shortcut = Keys.None;
+				if (mneIndex > -1)
+				{
+					shortcut = (Keys)Enum.Parse(typeof(Keys), tag.Substring(mneIndex + 1, 1), true);
+					if (shortcutDuplcate.Contains(shortcut))
+						MessageBox.Show("Shortcut :" + shortcut.ToString() + " is a duplicate!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					shortcutDuplcate.Add(shortcut);
+
+					tag = tag.Remove(mneIndex, 1);
+				}
 
 				if (hasText)
 					ImageInfo.TextTags.Add(tag);
@@ -59,12 +75,30 @@ namespace ImageTagger
 					t.Height = c.Height;
 					t.Tag = tag;
 					t.TextChanged += tag_TextChanged;
+					t.KeyDown += tag_TextBox_KeyDown;
 					Controls.Add(t);
 				}
 
 				this.tags[tag] = new tagInfo(c, t);
+				if (shortcut != Keys.None)
+					shortcuts[shortcut] = this.tags[tag];
 			}
 			ResumeLayout(true);
+		}
+
+		private void tag_TextBox_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Enter)
+			{
+				var t = (TextBox)sender;
+				var tag = (string)t.Tag;
+				var info = tags[tag];
+
+				info.State = CheckState.Checked;
+
+				e.Handled = true;
+				e.SuppressKeyPress = true;
+			}
 		}
 
 		private void tag_TextChanged(object sender, EventArgs e)
@@ -72,6 +106,8 @@ namespace ImageTagger
 			var t = (TextBox)sender;
 			var tag = (string)t.Tag;
 			var info = tags[tag];
+			if (info.PauseText)
+				return;
 
 			info.State = CheckState.Indeterminate;
 		}
@@ -90,6 +126,20 @@ namespace ImageTagger
 			}
 
 			onTagChanged(tag, info.Text, c.CheckState);
+		}
+
+		public void Shortcut_Down(KeyEventArgs e)
+		{
+			tagInfo info;
+			if (shortcuts.TryGetValue(e.KeyCode, out info))
+			{
+				if (info.State == CheckState.Checked)
+					info.State = CheckState.Unchecked;
+				else
+					info.State = CheckState.Checked;
+				e.Handled = true;
+				e.SuppressKeyPress = true;
+			}
 		}
 
 		public void BeginAdjust()
@@ -163,6 +213,9 @@ namespace ImageTagger
 			private readonly TextBox textBox;
 			private HashSet<string> text;
 
+			public bool PauseText { get { return pauseEvent; } }
+			private bool pauseEvent = false;
+
 			public tagInfo(CheckBox c, TextBox t)
 			{
 				CheckBox = c;
@@ -176,6 +229,8 @@ namespace ImageTagger
 
 			private void TextBox_TextChanged(object sender, EventArgs e)
 			{
+				if (PauseText)
+					return;
 				text.Clear();
 			}
 
@@ -191,8 +246,12 @@ namespace ImageTagger
 			{
 				if (text.Contains(txt))
 					return;
+				if (text.Count == 1)
+					State = CheckState.Indeterminate;
 				text.Add(txt);
+				pauseEvent = true;
 				textBox.Text = string.Join(" & ", text.ToArray());
+				pauseEvent = false;
 			}
 		}
 	}

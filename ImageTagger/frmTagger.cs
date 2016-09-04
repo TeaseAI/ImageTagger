@@ -32,11 +32,12 @@ namespace ImageTagger
 			imageList.ImageSize = new Size(imageSize, imageSize);
 			lst.TileSize = imageList.ImageSize;
 
-			addGroup(new UITagGroup("Viable Body Parts", false, false, onTagChanged, "Face", "Boobs", "Pussy", "Ass", "Legs", "Feet"));
-			addGroup(new UITagGroup("Covering", true, false, onTagChanged, "FullyDressed", "HalfDressed", "GarmentCovering", "HandsCovering", "SeeTrhough", "Naked"));
-			addGroup(new UITagGroup("Action", false, false, onTagChanged, "Masturbating", "Sucking", "Smiling", "Glaring"));
+			addGroup(new UITagGroup("Viable Body Parts", false, false, onTagChanged, "&Face", "&Boobs", "&Pussy", "&Ass", "&Legs", "F&eet"));
+			addGroup(new UITagGroup("Covering", true, false, onTagChanged, "Fully&Dressed", "HalfD&ressed", "GarmentCovering", "&HandsCovering", "See&Through", "&Naked"));
+			addGroup(new UITagGroup("Action", false, false, onTagChanged, "&Masturbating", "Su&cking", "&Smiling", "&Glaring"));
 			addGroup(new UITagGroup("Other", false, false, onTagChanged, "SideView", "CloseUp", "AllFours", "Piercing"));
 			addGroup(new UITagGroup("Text", false, true, onTagChanged, "Garment", "Underwear", "Tattoo", "SexToy", "Furniture"));
+
 		}
 
 		private void addGroup(UITagGroup group)
@@ -89,7 +90,6 @@ namespace ImageTagger
 			files.AddRange(Directory.GetFiles(txtPath.Text, "*.jpg", SearchOption.TopDirectoryOnly));
 			files.AddRange(Directory.GetFiles(txtPath.Text, "*.gif", SearchOption.TopDirectoryOnly));
 
-
 			foreach (var file in files)
 			{
 				var key = Path.GetFileName(file).ToLower();
@@ -124,7 +124,8 @@ namespace ImageTagger
 			}
 			threadPool.WaitForAll();
 
-			lst.Items.AddRange(images.Values.ToArray());
+			var imgs = from pair in images orderby pair.Key select pair.Value;
+			lst.Items.AddRange(imgs.ToArray());
 
 			lst.ResumeLayout(true);
 		}
@@ -194,6 +195,9 @@ namespace ImageTagger
 					info.Selected = true;
 				}
 			}
+			else
+				foreach (var grp in tagGroups)
+					grp.Shortcut_Down(e);
 		}
 
 		private void btnPickPath_Click(object sender, EventArgs e)
