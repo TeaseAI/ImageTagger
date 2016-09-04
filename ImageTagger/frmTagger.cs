@@ -136,7 +136,8 @@ namespace ImageTagger
 
 			var sb = new StringBuilder();
 			foreach (var image in images)
-				sb.AppendLine(image.Value.ToFileString());
+				if (!image.Value.Empty)
+					sb.AppendLine(image.Value.ToFileString());
 
 			using (var sw = new StreamWriter(path + "/ImageTags.txt"))
 				sw.Write(sb.ToString());

@@ -12,6 +12,7 @@ namespace ImageTagger
 	{
 		public static HashSet<string> TextTags = new HashSet<string>();
 
+		public bool Empty { get { return Tags.Count == 0; } }
 		public string Key { get { return ImageKey; } }
 		public string File;
 		public Dictionary<string, string> Tags = new Dictionary<string, string>();
