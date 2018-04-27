@@ -123,7 +123,10 @@ namespace ImageTagger
 
 					Invoke(new Action(() =>
 					{
-						lst.Invalidate();
+						if (info.ListView != null)
+							info.ListView.RedrawItems(info.Index, info.Index, false);
+						else
+							lst.Invalidate();
 					}));
 				});
 			}
@@ -166,6 +169,21 @@ namespace ImageTagger
 			else if (state == CheckState.Unchecked)
 				foreach (ImageInfo item in items)
 					item.Tags.Remove(tag);
+
+
+			// redraw selected items
+			int start = lst.Items.Count - 1;
+			int last = 0;
+			int index;
+			foreach (ImageInfo item in items)
+			{
+				index = item.Index;
+				if (index < start)
+					start = index;
+				if (index > last)
+					last = index;
+			}
+			lst.RedrawItems(start, last, false);
 		}
 
 		private void lst_SelectedIndexChanged(object sender, EventArgs e)
@@ -241,7 +259,7 @@ namespace ImageTagger
 
 			var item = e.Item as ImageInfo;
 			if (item.Bitmap != null)
-				e.Graphics.DrawImage(item.Bitmap, e.Bounds);
+				item.Draw(e.Graphics, e.Bounds);
 			else
 				e.Graphics.DrawString("Loading", DefaultFont, Brushes.Black, e.Bounds.X + imageSize / 2, e.Bounds.Y + imageSize / 2);
 		}

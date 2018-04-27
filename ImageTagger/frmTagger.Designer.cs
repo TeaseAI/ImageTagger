@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTagger));
 			this.txtPath = new System.Windows.Forms.TextBox();
 			this.buttonLoad = new System.Windows.Forms.Button();
 			this.panelTop = new System.Windows.Forms.Panel();
@@ -125,6 +126,7 @@
 			this.Controls.Add(this.lst);
 			this.Controls.Add(this.panelTop);
 			this.Controls.Add(this.panelRight);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "frmTagger";
 			this.Text = "ImageTagger";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmTagger_FormClosing);
