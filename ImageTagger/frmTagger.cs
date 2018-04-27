@@ -30,8 +30,7 @@ namespace ImageTagger
 		{
 			InitializeComponent();
 
-			imageList.ImageSize = new Size(imageSize, imageSize);
-			lst.TileSize = imageList.ImageSize;
+			lst.TileSize = new Size(imageSize, imageSize);
 
 			addGroup(new UITagGroup("Viable Body Parts", false, false, onTagChanged, "&Face", "&Boobs", "&Pussy", "&Ass", "&Legs", "F&eet"));
 			addGroup(new UITagGroup("Covering", true, false, onTagChanged, "Fully&Dressed", "HalfD&ressed", "GarmentCovering", "&HandsCovering", "See&Through", "&Naked"));
@@ -54,6 +53,7 @@ namespace ImageTagger
 
 		private void frmTagger_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			threadPool.Run = false;
 			buttonSave_Click(sender, e);
 		}
 
@@ -69,7 +69,6 @@ namespace ImageTagger
 			lst.SuspendLayout();
 			images.Clear();
 			lst.Clear();
-			imageList.Images.Clear();
 
 			if (File.Exists(path + "/ImageTags.txt"))
 			{
@@ -101,7 +100,8 @@ namespace ImageTagger
 
 				info.File = file;
 
-				threadPool.RunOrWait(() =>
+
+				threadPool.Encueue(() =>
 				{
 					// get image thumbnail and resize it.
 					var img = Image.FromFile(file);
@@ -120,10 +120,12 @@ namespace ImageTagger
 					thumb.Dispose();
 					img.Dispose();
 
-					imageList.Images.Add(info.Key, info.Bitmap);
+					Invoke(new Action(() =>
+					{
+						lst.Invalidate();
+					}));
 				});
 			}
-			threadPool.WaitForAll();
 
 			var imgs = from pair in images orderby pair.Key select pair.Value;
 			lst.Items.AddRange(imgs.ToArray());

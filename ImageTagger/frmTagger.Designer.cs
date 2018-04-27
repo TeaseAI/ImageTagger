@@ -28,43 +28,15 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.lst = new ImageTagger.ListViewDB();
-			this.imageList = new System.Windows.Forms.ImageList(this.components);
 			this.txtPath = new System.Windows.Forms.TextBox();
 			this.buttonLoad = new System.Windows.Forms.Button();
 			this.panelTop = new System.Windows.Forms.Panel();
 			this.btnPickPath = new System.Windows.Forms.Button();
 			this.buttonSave = new System.Windows.Forms.Button();
 			this.panelRight = new System.Windows.Forms.FlowLayoutPanel();
+			this.lst = new ImageTagger.ListViewDB();
 			this.panelTop.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// lst
-			// 
-			this.lst.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.lst.GridLines = true;
-			this.lst.HideSelection = false;
-			this.lst.LabelWrap = false;
-			this.lst.LargeImageList = this.imageList;
-			this.lst.Location = new System.Drawing.Point(0, 27);
-			this.lst.Name = "lst";
-			this.lst.OwnerDraw = true;
-			this.lst.ShowGroups = false;
-			this.lst.Size = new System.Drawing.Size(918, 654);
-			this.lst.TabIndex = 0;
-			this.lst.TileSize = new System.Drawing.Size(128, 128);
-			this.lst.UseCompatibleStateImageBehavior = false;
-			this.lst.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.lst_DrawItem);
-			this.lst.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lst_ItemSelectionChanged);
-			this.lst.SelectedIndexChanged += new System.EventHandler(this.lst_SelectedIndexChanged);
-			this.lst.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lst_KeyDown);
-			// 
-			// imageList
-			// 
-			this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth24Bit;
-			this.imageList.ImageSize = new System.Drawing.Size(128, 128);
-			this.imageList.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// txtPath
 			// 
@@ -125,6 +97,26 @@
 			this.panelRight.TabIndex = 4;
 			this.panelRight.Paint += new System.Windows.Forms.PaintEventHandler(this.panelRight_Paint);
 			// 
+			// lst
+			// 
+			this.lst.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.lst.GridLines = true;
+			this.lst.HideSelection = false;
+			this.lst.LabelWrap = false;
+			this.lst.Location = new System.Drawing.Point(0, 27);
+			this.lst.Name = "lst";
+			this.lst.OwnerDraw = true;
+			this.lst.ShowGroups = false;
+			this.lst.Size = new System.Drawing.Size(918, 654);
+			this.lst.TabIndex = 0;
+			this.lst.TileSize = new System.Drawing.Size(128, 128);
+			this.lst.UseCompatibleStateImageBehavior = false;
+			this.lst.View = System.Windows.Forms.View.Tile;
+			this.lst.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.lst_DrawItem);
+			this.lst.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lst_ItemSelectionChanged);
+			this.lst.SelectedIndexChanged += new System.EventHandler(this.lst_SelectedIndexChanged);
+			this.lst.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lst_KeyDown);
+			// 
 			// frmTagger
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -148,7 +140,6 @@
 		private ImageTagger.ListViewDB lst;
 		private System.Windows.Forms.TextBox txtPath;
 		private System.Windows.Forms.Button buttonLoad;
-		private System.Windows.Forms.ImageList imageList;
 		private System.Windows.Forms.Panel panelTop;
 		private System.Windows.Forms.FlowLayoutPanel panelRight;
 		private System.Windows.Forms.Button buttonSave;

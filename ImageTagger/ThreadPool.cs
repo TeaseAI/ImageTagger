@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -9,36 +10,39 @@ namespace ImageTagger
 	public class ThreadPool
 	{
 		private Thread[] threads;
+		private ConcurrentQueue<Action> Queue;
+
+		public bool Run = true;
 
 		public ThreadPool(int max)
 		{
 			threads = new Thread[max];
-		}
+			Queue = new ConcurrentQueue<Action>();
 
-		public void RunOrWait(ThreadStart start)
-		{
-			int i;
-			Thread t;
-			while (true)
+			Run = true;
+			for (int i = 0; i < max; ++i)
 			{
-				for (i = 0; i < threads.Length; i++)
-				{
-					t = threads[i];
-					if (t == null || !t.IsAlive)
-					{
-						t = threads[i] = new Thread(start);
-						t.Start();
-						return;
-					}
-				}
+				threads[i] = new Thread(new ThreadStart(ThreadRunning));
+				threads[i].Start();
 			}
 		}
 
-		public void WaitForAll()
+		public void Encueue(Action action)
 		{
-			foreach (Thread t in threads)
-				while (t != null && t.IsAlive)
-					Thread.Sleep(50);
+			Queue.Enqueue(action);
 		}
+
+		private void ThreadRunning()
+		{
+			Action action;
+			while (Run)
+			{
+				if (Queue.TryDequeue(out action))
+					action.Invoke();
+				else
+					Thread.Sleep(1000);
+			}
+		}
+
 	}
 }
