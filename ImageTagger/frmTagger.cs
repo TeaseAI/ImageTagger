@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Threading;
+using System.Drawing.Drawing2D;
 
 namespace ImageTagger
 {
@@ -225,6 +226,27 @@ namespace ImageTagger
 				buttonLoad_Click(sender, e);
 				e.SuppressKeyPress = true;
 			}
+		}
+
+		private void lst_DrawItem(object sender, DrawListViewItemEventArgs e)
+		{
+			if (e.Item.Selected)
+				e.Graphics.FillRectangle(Brushes.LightBlue, e.Bounds);
+			else
+				e.Graphics.FillRectangle(Brushes.LightGray, e.Bounds);
+
+
+			var item = e.Item as ImageInfo;
+			if (item.Bitmap != null)
+			{
+				// ToDo: Center image
+				//int x = item.Position.X + (item.Bounds.Width - item.Bitmap.Size.Width) / 2;
+				//int y = item.Position.Y + 0;
+				//e.Graphics.DrawImage(item.Bitmap, x, y, new Rectangle(Point.Empty, item.Bitmap.Size), GraphicsUnit.Pixel);
+				e.Graphics.DrawImage(item.Bitmap, e.Bounds);
+			}
+			else
+				e.Graphics.DrawString("Loading", DefaultFont, Brushes.Black, Point.Empty);
 		}
 	}
 }

@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.lst = new System.Windows.Forms.ListView();
+			this.lst = new ImageTagger.ListViewDB();
 			this.imageList = new System.Windows.Forms.ImageList(this.components);
 			this.txtPath = new System.Windows.Forms.TextBox();
 			this.buttonLoad = new System.Windows.Forms.Button();
@@ -49,11 +49,13 @@
 			this.lst.LargeImageList = this.imageList;
 			this.lst.Location = new System.Drawing.Point(0, 27);
 			this.lst.Name = "lst";
+			this.lst.OwnerDraw = true;
 			this.lst.ShowGroups = false;
 			this.lst.Size = new System.Drawing.Size(918, 654);
 			this.lst.TabIndex = 0;
 			this.lst.TileSize = new System.Drawing.Size(128, 128);
 			this.lst.UseCompatibleStateImageBehavior = false;
+			this.lst.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.lst_DrawItem);
 			this.lst.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lst_ItemSelectionChanged);
 			this.lst.SelectedIndexChanged += new System.EventHandler(this.lst_SelectedIndexChanged);
 			this.lst.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lst_KeyDown);
@@ -143,7 +145,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.ListView lst;
+		private ImageTagger.ListViewDB lst;
 		private System.Windows.Forms.TextBox txtPath;
 		private System.Windows.Forms.Button buttonLoad;
 		private System.Windows.Forms.ImageList imageList;
