@@ -113,9 +113,10 @@ namespace ImageTagger
 					var thumb = img.GetThumbnailImage(imageSize, imageSize, null, IntPtr.Zero);
 					info.Bitmap = new Bitmap(imageSize, imageSize);
 					var g = Graphics.FromImage(info.Bitmap);
-					// ToDo : center after resize.
 					g.FillRectangle(Brushes.Transparent, 0, 0, imageSize, imageSize);
-					g.DrawImage(thumb, 0, 0, w, h);
+					int x = (imageSize - w) / 2;
+					int y = (imageSize - h) / 2;
+					g.DrawImage(thumb, x, y, w, h);
 					g.Dispose();
 					thumb.Dispose();
 					img.Dispose();
@@ -240,15 +241,9 @@ namespace ImageTagger
 
 			var item = e.Item as ImageInfo;
 			if (item.Bitmap != null)
-			{
-				// ToDo: Center image
-				//int x = item.Position.X + (item.Bounds.Width - item.Bitmap.Size.Width) / 2;
-				//int y = item.Position.Y + 0;
-				//e.Graphics.DrawImage(item.Bitmap, x, y, new Rectangle(Point.Empty, item.Bitmap.Size), GraphicsUnit.Pixel);
 				e.Graphics.DrawImage(item.Bitmap, e.Bounds);
-			}
 			else
-				e.Graphics.DrawString("Loading", DefaultFont, Brushes.Black, Point.Empty);
+				e.Graphics.DrawString("Loading", DefaultFont, Brushes.Black, e.Bounds.X + imageSize / 2, e.Bounds.Y + imageSize / 2);
 		}
 	}
 }
