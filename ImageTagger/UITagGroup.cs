@@ -11,7 +11,8 @@ namespace ImageTagger
 {
 	public partial class UITagGroup : UserControl
 	{
-		private static HashSet<Keys> shortcutDuplcate = new HashSet<Keys>();
+		public static HashSet<Keys> shortcutDuplcate = new HashSet<Keys>();
+		private HashSet<Keys> localshortcutDuplcate = new HashSet<Keys>();
 
 		/// <summary> Prefixes all tags with "Tag" for use in Tease AI. </summary>
 		public static bool PrefixWithTag = true;
@@ -22,10 +23,14 @@ namespace ImageTagger
 		private bool single;
 		private bool hasText;
 
+		public Keys SelectKey;
 		private Dictionary<string, tagInfo> tags = new Dictionary<string, tagInfo>();
 		private Dictionary<Keys, tagInfo> shortcuts = new Dictionary<Keys, tagInfo>();
 
 		public UITagGroup(string title, bool singleSelection, bool hasText, TagChanged_Delegate onTagChanged, params string[] tags)
+			: this(title, singleSelection, hasText, true, onTagChanged, tags)
+		{ }
+		public UITagGroup(string title, bool singleSelection, bool hasText, bool standardShortcuts, TagChanged_Delegate onTagChanged, params string[] tags)
 		{
 			InitializeComponent();
 			SuspendLayout();
@@ -35,12 +40,26 @@ namespace ImageTagger
 			single = singleSelection;
 			this.hasText = hasText;
 
+			// group shortcut
+			if (!standardShortcuts)
+			{
+				int mneIndex = title.IndexOf('&');
+				SelectKey = Keys.None;
+				if (mneIndex > -1)
+				{
+					SelectKey = (Keys)Enum.Parse(typeof(Keys), title.Substring(mneIndex + 1, 1), true);
+					if (shortcutDuplcate.Contains(SelectKey))
+						MessageBox.Show("Shortcut :" + SelectKey.ToString() + " is a duplicate!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					shortcutDuplcate.Add(SelectKey);
+				}
+			}
+
+			int maxWidth = 0;
+
 			// add all of the tags.
 			for (int i = 0; i < tags.Length; ++i)
 			{
 				string tag = tags[i];
-				if (PrefixWithTag)
-					tag = "Tag" + tag;
 
 				// Get shortcut key from the tag.
 				int mneIndex = tag.IndexOf('&');
@@ -48,19 +67,33 @@ namespace ImageTagger
 				if (mneIndex > -1)
 				{
 					shortcut = (Keys)Enum.Parse(typeof(Keys), tag.Substring(mneIndex + 1, 1), true);
-					if (shortcutDuplcate.Contains(shortcut))
-						MessageBox.Show("Shortcut :" + shortcut.ToString() + " is a duplicate!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					shortcutDuplcate.Add(shortcut);
+					if (standardShortcuts)
+					{
+						if (shortcutDuplcate.Contains(shortcut))
+							MessageBox.Show("Shortcut :" + shortcut.ToString() + " is a duplicate!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						shortcutDuplcate.Add(shortcut);
 
-					tag = tag.Remove(mneIndex, 1);
+						tag = tag.Remove(mneIndex, 1);
+					}
+					else
+					{
+						if (localshortcutDuplcate.Contains(shortcut))
+							MessageBox.Show("Shortcut :" + shortcut.ToString() + " is a duplicate!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						localshortcutDuplcate.Add(shortcut);
+
+						tag = tag.Remove(mneIndex, 2).Trim();
+					}
 				}
 
+				if (PrefixWithTag)
+					tag = "Tag" + tag;
 				if (hasText)
 					ImageInfo.TextTags.Add(tag);
 
 				var c = new CheckBox();
 				c.Text = tags[i];
 				c.Height = 20;
+				c.AutoSize = true;
 				c.Top = lblTitle.Bottom + 5 + (c.Height * i);
 				c.Tag = tag;
 				c.CheckStateChanged += tag_CheckStateChanged;
@@ -84,6 +117,14 @@ namespace ImageTagger
 					shortcuts[shortcut] = this.tags[tag];
 			}
 			ResumeLayout(true);
+		}
+
+		public void SelectedChanged(bool selected)
+		{
+			if (selected)
+				lblTitle.ForeColor = Color.Green;
+			else
+				lblTitle.ForeColor = Color.Black;
 		}
 
 		private void tag_TextBox_KeyDown(object sender, KeyEventArgs e)

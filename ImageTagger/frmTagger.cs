@@ -25,6 +25,7 @@ namespace ImageTagger
 		private ThreadPool threadPool = new ThreadPool(Environment.ProcessorCount);
 
 		private List<UITagGroup> tagGroups = new List<UITagGroup>();
+		private UITagGroup selectedGroup;
 
 		public frmTagger()
 		{
@@ -32,18 +33,47 @@ namespace ImageTagger
 
 			lst.TileSize = new Size(imageSize, imageSize);
 
-			addGroup(new UITagGroup("Viable Body Parts", false, false, onTagChanged, "&Face", "&Boobs", "&Pussy", "&Ass", "&Legs", "F&eet"));
-			addGroup(new UITagGroup("Covering", true, false, onTagChanged, "Fully&Dressed", "HalfD&ressed", "GarmentCovering", "&HandsCovering", "See&Through", "&Naked"));
-			addGroup(new UITagGroup("Action", false, false, onTagChanged, "&Masturbating", "Su&cking", "&Smiling", "&Glaring"));
-			addGroup(new UITagGroup("Other", false, false, onTagChanged, "SideView", "CloseUp", "AllFours", "Piercing"));
-			addGroup(new UITagGroup("Text", false, true, onTagChanged, "Garment", "Underwear", "Tattoo", "SexToy", "Furniture"));
+			ChangeTagLayout(standardShortcuts.Checked);
+		}
 
+		public void ChangeTagLayout(bool standardShortcuts)
+		{
+			clearGroups();
+			UITagGroup.shortcutDuplcate.Clear();
+			if (standardShortcuts)
+			{
+				addGroup(new UITagGroup("Viable Body Parts", false, false, onTagChanged, "&Face", "&Boobs", "&Pussy", "&Ass", "&Legs", "F&eet"));
+				addGroup(new UITagGroup("Covering", true, false, onTagChanged, "Fully&Dressed", "HalfD&ressed", "GarmentCovering", "&HandsCovering", "See&Through", "&Naked"));
+				addGroup(new UITagGroup("Action", false, false, onTagChanged, "&Masturbating", "Su&cking", "&Smiling", "&Glaring"));
+				addGroup(new UITagGroup("Other", false, false, onTagChanged, "SideView", "CloseUp", "AllFours", "Piercing"));
+				addGroup(new UITagGroup("Text", false, true, onTagChanged, "Garment", "Underwear", "Tattoo", "SexToy", "Furniture"));
+			}
+			else
+			{
+				addGroup(new UITagGroup("&r Viable Body Parts", false, false, false, onTagChanged, "&q Face", "&a Boobs", "&z Pussy", "&w Ass", "&s Legs", "&x Feet"));
+				addGroup(new UITagGroup("&f Covering", true, false, false, onTagChanged, "&q FullyDressed", "&a HalfDressed", "&z GarmentCovering", "&w HandsCovering", "&s SeeThrough", "&x Naked"));
+				addGroup(new UITagGroup("&v Action", false, false, false, onTagChanged, "&q Masturbating", "&a Sucking", "&z Smiling", "&w Glaring"));
+				addGroup(new UITagGroup("&t Other", false, false, false, onTagChanged, "&q SideView", "&a CloseUp", "&z AllFours", "&w Piercing"));
+				addGroup(new UITagGroup("&g Text", false, true, false, onTagChanged, "&q Garment", "&a Underwear", "&z Tattoo", "&w SexToy", "&s Furniture"));
+			}
+		}
+
+		private void clearGroups()
+		{
+			tagGroups.Clear();
+			panelRight.Controls.Clear();
+			selectedGroup = null;
 		}
 
 		private void addGroup(UITagGroup group)
 		{
 			tagGroups.Add(group);
 			panelRight.Controls.Add(group);
+			if (selectedGroup == null)
+			{
+				selectedGroup = group;
+				group.SelectedChanged(true);
+			}
 		}
 
 		private void frmTagger_Load(object sender, EventArgs e)
@@ -158,7 +188,7 @@ namespace ImageTagger
 
 		public void onTagChanged(string tag, string text, CheckState state)
 		{
-			if (PauseChanged)
+			if (PauseChanged || lst.SelectedItems.Count == 0)
 				return;
 
 			// remove or add the tag for all the selected items.
@@ -216,10 +246,37 @@ namespace ImageTagger
 				{
 					info.Selected = true;
 				}
+				e.Handled = true;
+				e.SuppressKeyPress = true;
 			}
 			else
-				foreach (var grp in tagGroups)
-					grp.Shortcut_Down(e);
+			{
+				// standard shortcuts
+				if (standardShortcuts.Checked)
+					foreach (var grp in tagGroups)
+						grp.Shortcut_Down(e);
+				// alt shortcuts
+				else
+				{
+					// select group
+					foreach (var grp in tagGroups)
+					{
+						if (grp.SelectKey == e.KeyCode)
+						{
+							if (selectedGroup != null)
+								selectedGroup.SelectedChanged(false);
+							selectedGroup = grp;
+							grp.SelectedChanged(true);
+							e.Handled = true;
+							e.SuppressKeyPress = true;
+							return;
+						}
+					}
+					// else send key to selected group
+					if (selectedGroup != null)
+						selectedGroup.Shortcut_Down(e);
+				}
+			}
 		}
 
 		private void btnPickPath_Click(object sender, EventArgs e)
@@ -269,6 +326,11 @@ namespace ImageTagger
 			if (lst.FocusedItem == null)
 				return;
 			System.Diagnostics.Process.Start(((ImageInfo)lst.FocusedItem).File);
+		}
+
+		private void standardShortcuts_CheckedChanged(object sender, EventArgs e)
+		{
+			ChangeTagLayout(standardShortcuts.Checked);
 		}
 	}
 }

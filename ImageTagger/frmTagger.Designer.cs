@@ -36,6 +36,7 @@
 			this.buttonSave = new System.Windows.Forms.Button();
 			this.panelRight = new System.Windows.Forms.FlowLayoutPanel();
 			this.lst = new ImageTagger.ListViewDB();
+			this.standardShortcuts = new System.Windows.Forms.CheckBox();
 			this.panelTop.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -59,6 +60,7 @@
 			// 
 			// panelTop
 			// 
+			this.panelTop.Controls.Add(this.standardShortcuts);
 			this.panelTop.Controls.Add(this.btnPickPath);
 			this.panelTop.Controls.Add(this.buttonSave);
 			this.panelTop.Controls.Add(this.txtPath);
@@ -119,6 +121,19 @@
 			this.lst.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lst_KeyDown);
 			this.lst.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lst_MouseDoubleClick);
 			// 
+			// standardShortcuts
+			// 
+			this.standardShortcuts.AutoSize = true;
+			this.standardShortcuts.Checked = true;
+			this.standardShortcuts.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.standardShortcuts.Location = new System.Drawing.Point(543, 5);
+			this.standardShortcuts.Name = "standardShortcuts";
+			this.standardShortcuts.Size = new System.Drawing.Size(117, 17);
+			this.standardShortcuts.TabIndex = 0;
+			this.standardShortcuts.Text = "Standard Shortcuts";
+			this.standardShortcuts.UseVisualStyleBackColor = true;
+			this.standardShortcuts.CheckedChanged += new System.EventHandler(this.standardShortcuts_CheckedChanged);
+			// 
 			// frmTagger
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -147,6 +162,7 @@
 		private System.Windows.Forms.FlowLayoutPanel panelRight;
 		private System.Windows.Forms.Button buttonSave;
 		private System.Windows.Forms.Button btnPickPath;
+		private System.Windows.Forms.CheckBox standardShortcuts;
 	}
 }
 
