@@ -117,6 +117,7 @@
 			this.lst.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lst_ItemSelectionChanged);
 			this.lst.SelectedIndexChanged += new System.EventHandler(this.lst_SelectedIndexChanged);
 			this.lst.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lst_KeyDown);
+			this.lst.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lst_MouseDoubleClick);
 			// 
 			// frmTagger
 			// 

@@ -263,5 +263,12 @@ namespace ImageTagger
 			else
 				e.Graphics.DrawString("Loading", DefaultFont, Brushes.Black, e.Bounds.X + imageSize / 2, e.Bounds.Y + imageSize / 2);
 		}
+
+		private void lst_MouseDoubleClick(object sender, MouseEventArgs e)
+		{
+			if (lst.FocusedItem == null)
+				return;
+			System.Diagnostics.Process.Start(((ImageInfo)lst.FocusedItem).File);
+		}
 	}
 }
