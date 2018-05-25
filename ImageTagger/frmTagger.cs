@@ -27,9 +27,17 @@ namespace ImageTagger
 		private List<UITagGroup> tagGroups = new List<UITagGroup>();
 		private UITagGroup selectedGroup;
 
+		private Properties.Settings Settings;
+
 		public frmTagger()
 		{
 			InitializeComponent();
+
+
+			Settings = new Properties.Settings();
+			txtPath.Text = Settings.LastPath;
+			standardShortcuts.Checked = Settings.StandardShortcuts;
+			imageSize = Settings.ImageSize;
 
 			lst.TileSize = new Size(imageSize, imageSize);
 
@@ -79,12 +87,15 @@ namespace ImageTagger
 		private void frmTagger_Load(object sender, EventArgs e)
 		{
 			ActiveControl = txtPath;
+			if (txtPath.Text != "")
+				buttonLoad_Click(sender, e);
 		}
 
 		private void frmTagger_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			threadPool.Run = false;
 			buttonSave_Click(sender, e);
+			Settings.Save();
 		}
 
 
@@ -95,6 +106,8 @@ namespace ImageTagger
 			path = txtPath.Text;
 			if (path.Length == 0 || !Directory.Exists(path))
 				return;
+
+			Settings.LastPath = path;
 
 			lst.SuspendLayout();
 			images.Clear();
@@ -151,13 +164,18 @@ namespace ImageTagger
 					thumb.Dispose();
 					img.Dispose();
 
-					Invoke(new Action(() =>
+					try
 					{
-						if (info.ListView != null)
-							info.ListView.RedrawItems(info.Index, info.Index, false);
-						else
-							lst.Invalidate();
-					}));
+						Invoke(new Action(() =>
+						{
+							if (info.ListView != null)
+								info.ListView.RedrawItems(info.Index, info.Index, false);
+							else
+								lst.Invalidate();
+						}));
+					}
+					catch (Exception ex) when (ex is ObjectDisposedException || ex is InvalidAsynchronousStateException)
+					{ }
 				});
 			}
 
@@ -330,6 +348,7 @@ namespace ImageTagger
 
 		private void standardShortcuts_CheckedChanged(object sender, EventArgs e)
 		{
+			Settings.StandardShortcuts = standardShortcuts.Checked;
 			ChangeTagLayout(standardShortcuts.Checked);
 		}
 
