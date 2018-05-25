@@ -332,5 +332,45 @@ namespace ImageTagger
 		{
 			ChangeTagLayout(standardShortcuts.Checked);
 		}
+
+		private void btnNextSet_Click(object sender, EventArgs e)
+		{
+			var current = new DirectoryInfo(path);
+			var domPath = current.Parent;
+			var sets = domPath.GetDirectories().OrderBy(d => d.Name).ToArray();
+
+			int i = 0;
+			for (i = 0; i < sets.Length; ++i)
+				if (sets[i].Name.Equals(current.Name, StringComparison.OrdinalIgnoreCase))
+					break;
+			++i;
+			if (i >= sets.Length)
+				MessageBox.Show("At last set!");
+			else
+			{
+				txtPath.Text = sets[i].FullName;
+				buttonLoad_Click(sender, e);
+			}
+		}
+
+		private void btnPreviousSet_Click(object sender, EventArgs e)
+		{
+			var current = new DirectoryInfo(path);
+			var domPath = current.Parent;
+			var sets = domPath.GetDirectories().OrderBy(d => d.Name).ToArray();
+
+			int i = 0;
+			for (i = 0; i < sets.Length; ++i)
+				if (sets[i].Name.Equals(current.Name, StringComparison.OrdinalIgnoreCase))
+					break;
+			--i;
+			if (i < 0)
+				MessageBox.Show("At first set!");
+			else
+			{
+				txtPath.Text = sets[i].FullName;
+				buttonLoad_Click(sender, e);
+			}
+		}
 	}
 }
