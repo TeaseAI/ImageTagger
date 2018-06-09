@@ -53,6 +53,7 @@
     <Compile Include="frmTagger.Designer.cs">
       <DependentUpon>frmTagger.cs</DependentUpon>
     </Compile>
+    <Compile Include="Icons.cs" />
     <Compile Include="ImageInfo.cs" />
     <Compile Include="ListViewDB.cs">
       <SubType>Component</SubType>

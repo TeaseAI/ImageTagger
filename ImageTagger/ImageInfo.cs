@@ -62,21 +62,8 @@ namespace ImageTagger
 		{
 			g.DrawImage(Bitmap, bounds);
 
-			// ToDo: Make generic, load from file.
-			if (Tags.ContainsKey("TagFace"))
-				g.DrawImage(Resources.Face, new Point(bounds.X, bounds.Y + 16 * 1));
-			if (Tags.ContainsKey("TagBoobs"))
-				g.DrawImage(Resources.Boobs, new Point(bounds.X, bounds.Y + 16 * 2));
-			if (Tags.ContainsKey("TagAss"))
-				g.DrawImage(Resources.Ass, new Point(bounds.X, bounds.Y + 16 * 3));
-			if (Tags.ContainsKey("TagFeet"))
-				g.DrawImage(Resources.Feet, new Point(bounds.X, bounds.Y + 16 * 4));
-			if (Tags.ContainsKey("TagLegs"))
-				g.DrawImage(Resources.Legs, new Point(bounds.X, bounds.Y + 16 * 5));
-			if (Tags.ContainsKey("TagNaked"))
-				g.DrawImage(Resources.Naked, new Point(bounds.X, bounds.Y + 16 * 6));
-			if (Tags.ContainsKey("TagPussy"))
-				g.DrawImage(Resources.Pussy, new Point(bounds.X, bounds.Y + 16 * 7));
+			Icons.DrawAll(g, bounds, Tags);
+
 		}
 	}
 }

@@ -16,7 +16,7 @@ namespace ImageTagger
 	{
 		private Dictionary<string, ImageInfo> images = new Dictionary<string, ImageInfo>();
 
-		private int imageSize = 256;
+		public static int ImageSize = 256;
 
 		private bool PauseChanged = false;
 
@@ -37,9 +37,10 @@ namespace ImageTagger
 			Settings = new Properties.Settings();
 			txtPath.Text = Settings.LastPath;
 			standardShortcuts.Checked = Settings.StandardShortcuts;
-			imageSize = Settings.ImageSize;
+			ImageSize = Settings.ImageSize;
 
-			lst.TileSize = new Size(imageSize, imageSize);
+			Icons.Load();
+			lst.TileSize = new Size(ImageSize, ImageSize);
 
 			ChangeTagLayout(standardShortcuts.Checked);
 		}
@@ -148,17 +149,17 @@ namespace ImageTagger
 				{
 					// get image thumbnail and resize it.
 					var img = Image.FromFile(file);
-					int w = imageSize, h = imageSize;
+					int w = ImageSize, h = ImageSize;
 					if (img.Width > img.Height)
-						h = (int)((float)img.Height / (float)img.Width * imageSize);
+						h = (int)((float)img.Height / (float)img.Width * ImageSize);
 					else if (img.Height > img.Width)
-						w = (int)((float)img.Width / (float)img.Height * imageSize);
-					var thumb = img.GetThumbnailImage(imageSize, imageSize, null, IntPtr.Zero);
-					info.Bitmap = new Bitmap(imageSize, imageSize);
+						w = (int)((float)img.Width / (float)img.Height * ImageSize);
+					var thumb = img.GetThumbnailImage(ImageSize, ImageSize, null, IntPtr.Zero);
+					info.Bitmap = new Bitmap(ImageSize, ImageSize);
 					var g = Graphics.FromImage(info.Bitmap);
-					g.FillRectangle(Brushes.Transparent, 0, 0, imageSize, imageSize);
-					int x = (imageSize - w) / 2;
-					int y = (imageSize - h) / 2;
+					g.FillRectangle(Brushes.Transparent, 0, 0, ImageSize, ImageSize);
+					int x = (ImageSize - w) / 2;
+					int y = (ImageSize - h) / 2;
 					g.DrawImage(thumb, x, y, w, h);
 					g.Dispose();
 					thumb.Dispose();
@@ -336,7 +337,7 @@ namespace ImageTagger
 			if (item.Bitmap != null)
 				item.Draw(e.Graphics, e.Bounds);
 			else
-				e.Graphics.DrawString("Loading", DefaultFont, Brushes.Black, e.Bounds.X + imageSize / 2, e.Bounds.Y + imageSize / 2);
+				e.Graphics.DrawString("Loading", DefaultFont, Brushes.Black, e.Bounds.X + ImageSize / 2, e.Bounds.Y + ImageSize / 2);
 		}
 
 		private void lst_MouseDoubleClick(object sender, MouseEventArgs e)
