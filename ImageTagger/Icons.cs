@@ -17,6 +17,7 @@ namespace ImageTagger
 
 		public static int IconSize = 16;
 		public static bool DropShadow = true;
+		public static bool Move = true;
 		private static Dictionary<string, IconInfo> icons;
 
 		private static ImageAttributes imageAttributes_makeWhite;
@@ -89,6 +90,12 @@ namespace ImageTagger
 			}
 			else
 				bitmap = icon;
+
+			if (!Move)
+			{
+				x = 0;
+				y = 0;
+			}
 
 			// Add the info to the 'list'.
 			icons[tag] = new IconInfo()

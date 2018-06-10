@@ -58,5 +58,41 @@ namespace ImageTagger.Properties {
                 this["ImageSize"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        public int IconSize {
+            get {
+                return ((int)(this["IconSize"]));
+            }
+            set {
+                this["IconSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IconMove {
+            get {
+                return ((bool)(this["IconMove"]));
+            }
+            set {
+                this["IconMove"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IconShadow {
+            get {
+                return ((bool)(this["IconShadow"]));
+            }
+            set {
+                this["IconShadow"] = value;
+            }
+        }
     }
 }

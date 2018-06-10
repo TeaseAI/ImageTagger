@@ -39,6 +39,10 @@ namespace ImageTagger
 			standardShortcuts.Checked = Settings.StandardShortcuts;
 			ImageSize = Settings.ImageSize;
 
+			Icons.IconSize = Settings.IconSize;
+			Icons.DropShadow = Settings.IconShadow;
+			Icons.Move = Settings.IconMove;
+
 			Icons.Load();
 			lst.TileSize = new Size(ImageSize, ImageSize);
 
